@@ -86,3 +86,97 @@ Array와는 달리 논리적 저장 순서와 물리적 저장순서의 차이�
 
 ![HashTable](img/hashTable.png)
 
+- Key,Hash Function,Hash,Value,저장소(Bucket,Slot)으로 구성
+
+### Key
+- 고유한 값이다.
+- 저장 공간의 효율성을 위해 Hash Function에 입력하여 Hash로 변경 후 저장
+  - Key는 길이가 다양하기에 그대로 저장할 경우 다양한 길이만큼의 저장소 구성이 필요하다.
+
+### Hash Function
+- Key를 Hash로 바꿔주는 역할을 수행한다.
+- 해시 충돌(서로 다른 Key가 같은 Hash가 되는 경우)이 발생할 확률을 최대한 줄이는 함수를 만드는 것이 중요
+
+### Hash
+- Hash Function의 결과
+- 저장소에 Value와 매칭되어 저장된다.
+
+### Value
+- 최종적으로 저장소에 저장되는 값
+- 키와 매칭되어 삭제,저장,검색 작업 가능
+
+### HashTable의 동작과정
+
+1. Key를 HashFunction을 통해 Hash로 생성한다.
+2. Hash를 배열의 index로 사용한다.
+3. 해당 Index에 Value를 저장한다.
+
+* HashTable 크기가 10이라면 A라는 Key의 Value를 찾을 때 hashFunction("A") % 10 연산을 통해 인덱스 값 계산하여 Value 조회
+
+### Hash 충돌
+- 서로다른 Key가 Hash Function에 의해 중복적인 Hash를 산출
+- 충돌이 많아질 수록 탐색의 시간복잡도가 O(1)에서 O(n)으로 증가
+
+### Hash 충돌 해결방법
+
+1. **Separating Chaining**
+- JDK 내부에서 사용하는 충돌처리 방식
+- 추가적인 메모리를 사용하여 동일한 버킷에 값이 있으면 Linked List로 해당 value를 뒤에 저장한다.
+
+![Separating Chaining1](https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Hash_table_5_0_1_1_1_1_1_LL.svg/675px-Hash_table_5_0_1_1_1_1_1_LL.svg.png)
+
+![Separating Chaining2](https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Hash_table_5_0_1_1_1_1_0_LL.svg/750px-Hash_table_5_0_1_1_1_1_0_LL.svg.png)
+
+- 자바 8이상에서는 데이터의 크기에 따라 Linked List 대신 Tree를 사용하며, Tree의 사용이 성능상 이점이 더 높음
+  - Linked List 데이터 6개 이하, Red-Black Tree 데이터 8개 이상
+- Linked List 사용시 충돌이 발생하면 충돌 발생한 인덱스가 가리키고 있는 Linked List에 노드를 추가하여 삽입한다.
+- Key에 대한 Value 탐색 시에는 인덱스가 가리키고 있는 Linked List를 선형 검색하여 Value 반환 (삭제도 마찬가지)
+- Linked List 구조를 사용하기 때문에 추가 데이터 수 제약이 적은편
+
+2. **Open Addressing**
+- 추가 메모리 공간을 사용하지 않고, HashTable 배열의 빈공간을 이용하는 방법
+- 데이터 삽입시 해당 버킷(target)이 사용되고 있다면, 다른 해시 버킷에 데이터를 삽입하는 방식
+- 데이터를 저장,조회하는 방식이 다양하다.
+- Separating Chaining 방식에 비해 적은 메모리 사용
+- 방법은 Linear Probing, Quadratic Probing, Double Hashing
+- 삭제 작업에 유의
+
+3. Resizing
+- 저장 공간이 일정 수준 채워지면, Separating Chaining의 경우 성능 향상을 위해,Open addressing의 경우 배열크기의 확장을 위해 Resizing
+- 보통 두배로 확장시킨다.
+- 확장 임계점은 현재 데이터 개수가 Hash Bucket 개수의 75%가 될 때
+
+### HashTable의 장점
+- 적은 리소스로 많은 데이터를 효율적으로 관리 가능
+  - ex. Cloud에 있는 많은 데이터를 Hash로 매핑하여 작은 크기의 시 메모리로 프로세스 관리 가능
+- 배열의 인덱스를 사용하기 때문에 빠른 검색,삭제,삽입 능력을 가지며 시간복잡도는 O(1)
+- Key와 Hash사이의 연관성이 존재하지 않기에 보안에 유리하다.
+- 데이터 캐싱에 많이 사용
+  - get,put 기능에 캐시 로직 추가 시 자주 hit하는 데이터 바로 검색 가ㅡㄴㅇ
+  - 중복 제거에 유용
+
+### HashTable 단점
+- 충돌 발생 가능성
+- 공간 복잡도 증가
+- 순서 무시
+- 해쉬 함수에 의존적
+
+## HashTable vs HashMap
+- Key-Value 구조 및 Key에 대한 Hash로 Value 관리하는 것은 동일
+
+- HashTable
+  - 동기처리(thread-safe)
+  - Key-Value 값으로 null 미허용 (Key가 hashcode(), equals()를 사용하기 때문)
+  - 보조 Hash Function과 separating Chaining을 사용해서 비교적 충돌 덜 발생 (Key의 Hash 변형)
+
+- HashMap
+  - 비동기 처리(멀티스레드에서 사용시 주의해야한다.)
+  - Key-Value 값으로 null 허용
+  
+### HashTable 성능
+
+| |평균|최악|
+|----|----|----|
+|탐색|O(1)|O(N)|
+|삽입|O(1)|O(N)|
+|삭제|O(1)|O(N)|
