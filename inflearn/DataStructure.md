@@ -37,6 +37,7 @@ Array의 장점으로는 조회가 빠르다는 점으로 조회가 빈번히 �
 이렇게 동적으로 배열의 크기를 조절하는 자료구조를 Dynamic Array라고 합니다.
 다른 방법으로는, Array대신 Linked List를 사용함으로서 데이터 추가시 새로운 메모리 공간을 할당받는 방법을 이용합니다.
 
+*********************
 
 ## Q. Dynamic Array는 어떤 자료구조 인가요?
 
@@ -105,3 +106,113 @@ Linked List와 비교했을 때, Dynamic Array의 **단점**은 다음과같다.
 - resize를 수행할 때 낮은 performance 발생
 - resize에 시간이 많이 걸리고, memory 공간을 필요이상으로 할당받아 메모리 낭비 발생우려 
 
+***********************
+
+## Q. Linked List 대해서 설명해 주세요
+
+Linked List는 Node라는 구조체로 이루어져 있는데, Node는 데이터 값과 다음 Node의 address를 저장한다.
+Linked List는 물리적인 메모리상에서는 비연속적으로 저장되지만 Linked List를 구성하는 각각의 Node가  다음 Node의 address를 가리킴으로써 논리적인 연속성을 가진 자료구조이다.
+단, 마지막 Node가 가리키는 address는 null값으로 저장되어있다.
+
+> ✏ Tip
+> 
+> Linked List는 tree,graph등 다른 자료구조를 구현할 때 자주 쓰이는 기본 자료구조이다.
+> 면접에서 Linked List를 설명할 때에는 메모리상에서 불연속적인 데이터가 저장된다는 점과 Node의 Next address를 통해 물리적으로 불연속적인 데이터를
+> 논리적으로는 연속성을 보장해준다는 것을 위주로 설명한다.
+> 또한, 데이터 추가 시점에 새로운 메모리를 할당하기에 메모리를 좀 더 효율적으로 사용할 수 있다.
+
+### 논리적 연속성
+
+각 Node는 다음 Node의 Address 즉, 주소를 알고있다. 그렇기에 논리적으로 연속성을 유지하며 연결되어 있다.
+Array의 경우 연속성을 유지하기위해, 물리적 메모리상에서 순차적으로 저장하는 방법을 사용하였고, Linked List에서는 메모리의 연속성을 사용하지 않아도되는
+제약의 자유로움이 생김으로서 메모리 사용의 부담이 표면적으로는 줄어들었지만, 다음 Node의 주소값을 새롭게 메모리에
+할당해야하기에 데이터가 하나당 차지하는 메모리 사용량은 높아지게 되었습니다.
+
+
+### Linked List의 삽입 삭제
+
+![](img/LinkedList.png)
+
+위 그림과 같이 기존 Array에서 가지는 불편점인, Shift 과정없이 노드가 가리키는 주소값만 바꿔주면 삽입 및 삭제가 수월하다.
+
+해당 과정을 거쳐 Array에서는 O(N)이던 시간복잡도를 주소값만 변경하는 것으로 바꾸어 O(1)의 시간복잡도만을 가진다.
+
+![img.png](img/LinkedListBigO.png)
+
+위사진을 보면 access와 search는 빅오표기법으로 `O(N)`을 가진다. 이는 Array에서는 가능하던 random access라는 특성이 순차적 접근으로 바뀌어 N개의 데이터를
+모두 접근해야한다는 특성으로 바뀌어 `O(N)`으로 표기된다.
+
+********************
+
+## ✨ Array vs Linked List를 비교해서 설명해주세요
+
+Array는 메모리상에서 연속적으로 데이터를 저장하는 자료구조입니다. Linked List는 메모리 상에서는 연속적이지는 않지만, 각각의 원소가 다음원소의 주소값을
+저장해놓기에 논리적으로는 연속성을 보장받는 자료구조입니다.
+
+그래서 각 operation 즉 내부 동작 작업의 시간복잡도가 다릅니다. 데이터조회,접근은 Array의 경우 O(1) Linked List의 경우 O(N)이며 삽입/삭제 또한
+Array는 O(N),Linked List는 O(1)의 시간복잡도를 가집니다.
+
+따라서 데이터의 양이 고정적이고, 조회작업이 많다면 Array를, 데이터의 개수가 불확실하고 삽입 또는 삭제 작업이 잦다면 Linked List를 사용하는 것이 좋습니다.
+
+`조회`에서는 Array는 random access라는 특성상 빠르지만, Linked List는 순차접근의 특성상 느리다.
+
+`삽입/삭제`에서는 Array의 시간복잡도는 맨 앞/뒤의 경우 시간복잡도가 O(1)이며, 맨 마지막 원소가 아닌 중간에 있는 원소를 삽입/삭제 할경우
+`shift`가 일어나기 때문에 비용이 추가적으로 지불된다.이경우에는 시간복잡도가 O(N)이다.
+
+하지만 Linked List도 삽입후 정렬 단계를 거치기에 표면적으로는 시간복잡도가 O(1)이지만, 실질적으로는 O(N)이다.
+
+### Memory
+
+Array의 주된 장점은 데이터접근과 append(추가)가 빠르다는 것입니다. 하지만 잉여 메모리가 낭비된다는 단점이 존재합니다.
+배열은 선언시에 fixed size를 설정하여 메모리 할당을 합니다. 즉, 데이터가 저장되어 있지 않더라도 메모리를 차지하는 잉여 메모리가 생긴다.
+
+반면 Linked List는 runtime 중에서도 size의 조절이가능하며 필요한만큼 memory allocation을 진행하기에 메모리 낭비가 없습니다.
+
+### (꼬꼬무 문답) Q. 어느상황에 Linked List를 쓰는게 Array보다 더 나을까요?
+
+[핵심 답변]
+- O(1)으로 삽입/삭제를 자주해야할 때,
+- 얼마만큼의 데이터가 들어올지 예측할 수 없을 때
+- 조회 작업이 별로 없을 때
+
+### Q. 어느상황에 Array를 쓰는게 Linked List보다 더 나을 까요?
+
+[핵심 답변]
+- 조회 작업을 자주해야할 때
+- Array를 선언할 당시에 데이터 갯수를 알고 있을 때
+- 데이터를 반복문을 통해서 빠르게 순회할 때
+- 메모리를 적게 쓰는게 중요한 상황일 때, Linked List보단 Array가 메모리를 적게 차지하기 때문에 미리 들어올 데이터의 양을 알고있다면 Array가 메모리를 더 효율적으로 사용함
+
+### Q. Array와 Linked List의 memory allocation은 언제 일어나며, 메모리의 어느 영역을 할당 받나요?
+
+- Array는 compile 단계에서 memory allocation이 일어납니다. 이를 static Memory Allocation이라고 하며, 이경우 Stack Memory 영역에 할당된다.
+
+- Linked List의 경우 runtime에서 새로운 node가 추가될때 memory allocation이 일어나기에 Dynamic Memory Allocation이라고 하며, Heap 메모리 영역에 할당된다.
+
+Array의 경우 fixed size로 이미 size를 알고 있기에 compile 단계에서 할당되고 Linked List의 경우 새로운 데이터 추가시 새로운 Node를 할당하기에 runtime에서 작동합니다.
+
+***********************
+
+## Q. Queue는 무슨 구조인가요?
+
+queue는 선입선출 FIFO(First in First Out)의 자료구조입니다. 시간복잡도는 enqueue O(1),dequeue O(1)로, 활용 예시로는
+Cache 구현, 프로세스 관리, 너비우선탐색(BFS)등이 존재합니다.
+
+queue에 데이터를 offer하는 것을 `enqueue`라고 하며 반대로 poll하는 것을 `dequeue`라고한다. 또한 FIFO 구조임을 기억하자
+
+### FIFO
+
+선입선출의 원리로 먼저 넣은 데이터가 먼저 산출되는 자료구조이다.
+
+### enqueue & dequeue
+
+queue에서 데이터를 추가하는 것을 enqueue라고 하며, 반대로 추출하는 것을 dequeue라고 한다.
+
+enqueue의 경우 queue의 맨 뒤에 데이터를 추가하면 되기에 시간복잡도는 O(1)이다.
+이와 비슷하게 dequeue 역시 맨앞의 데이터를 삭제하면 되기에 시간복잡도는 O(1)이다.
+
+### 구현방식
+
+- Array-Base queue 
+  - enqueue와 dequeue 과정에서 남는 메모리가 생긴다.
+  - 
