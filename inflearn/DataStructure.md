@@ -213,6 +213,83 @@ enqueue의 경우 queue의 맨 뒤에 데이터를 추가하면 되기에 시간
 
 ### 구현방식
 
-- Array-Base queue 
-  - enqueue와 dequeue 과정에서 남는 메모리가 생긴다.
-  - 
+### Array-Base queue 
+  
+- enqueue와 dequeue 과정에서 남는 메모리가 생긴다.
+- queue를 배열기반으로 제작하기 위해선 Front와 Rear가 존재해야한다.
+
+### Array-Base queue에서의 enqueue
+  
+- 연산이 일어날 때 데이터가 Front와 Rear를 최우선적으로 가리키게 한다. 
+- 두번째 부터 들어오는 데이터는 자연스럽게 꼬리(Rear)가 된다.
+
+### Array-Base queue에서의 dequeue
+
+- dequeue방법에는 총 두가지 방법이 존재한다.
+  1. 단순히 데이터 추출시 다음 순서의 데이터를 앞으로 보내는 방식
+  2. 데이터의 위치는 그대로 두며, Front를 움직이는 방식
+
+- 하지만 첫번째 방법에는 문제점이 존재한다.
+  - 첫번째로는 Front의 존재유무가 불분명해진다.
+  - 두번째로는 dequeue 연산을 진행할 때마다,데이터를 이동시켜야하는 비용이 소모된다는 점이 존재한다.
+
+- **그래서 두번째는 어떤가?**
+  - 두번째 방식은 데이터는 그대로 두고 Front(맨앞)만 움직이는 방법이다. 즉, 가리키는 노드를 움직인다.
+  - 하지만 해당방법도 문제는 존재한다. 배열의 상태가 아래 그림과 같을 경우 새로운 데이터를 enqueue할 시 Rear를 더 이상 이동시킬 수 없다.
+  - ![](https://velog.velcdn.com/images/sp1rit/post/11d1e9ba-5a00-4178-bc23-32e1ec236f04/image.png)
+  - 이 문제를 해결하기 위해서는 Rear을 맨 앞으로 이동시키면 된다.
+    Rear이 배열의 끝에 도달하면 맨 앞으로 이동하고, Front 또한 Rear을 따라서 배열의 앞으로 이동하면 된다.
+  - 이런 형태로 동작하는 배열 기반의 큐를 원형 큐(Circular queue)라고 한다.
+
+### List-Based Queue
+
+- 재할당이나 메모리 낭비의 걱정이 사라진다.
+- Linked List 기반이기에 enqueue시에 메모리 새로할당 dequeue 시에 메모리 삭제
+
+### 확장과 활용
+
+queue의 개념에서 조금 확장한 자료구조들로는 양쪽에서 enqueue와 dequeue가 가능한 deque(덱,double-ended queue)와 시간순서가 아닌 우선쉰위가 높은순서로
+dequeue할 수 있는 priority queue(우선순위 큐)가 있다.
+
+활용 예시로는 하나의 자원을 공유하는 프린터나, CPU task scheduling, Cache 구현, 너비우선탐색(BFS)등이 있다.
+
+### Circular Queue
+
+원형큐라고 부르며 모습을 도식화하자면 다음과 같다.
+
+![](https://velog.velcdn.com/images/sp1rit/post/065bb1aa-0617-4aee-92e7-003470bff3b4/image.png)
+
+데이터를 집어 넣는과정을 보자
+
+![](https://velog.velcdn.com/images/sp1rit/post/065bb1aa-0617-4aee-92e7-003470bff3b4/image.png)
+
+처음 enqueue 과정에서는 front와 rear가 첫 데이터를 가리키게 된다. 이후 데이터가 추가될 수록 rear를 가리키는 포인터가 변한다.
+dequeue 과정을 거칠 때는 Front가 이동하며 데이터를 꺼낸다.
+
+![](https://velog.velcdn.com/images/sp1rit/post/390ff178-9810-467b-9d63-282109069dce/image.png)
+
+하지만 여기서 문제점으로는, 데이터가 가득찼을 때와 모두 비워졌을 때이다.
+
+![](https://velog.velcdn.com/images/sp1rit/post/390ff178-9810-467b-9d63-282109069dce/image.png)
+
+그림과 같이 데이터가 가득찼을 때나, 비었을 때나 Front가 Rear를 앞선다.
+여기서 문제는 Front와 Rear를 통해 큐의 상태를 알수 없다는 점이다.
+이러한 문제를 해결하기 위해 다른방식을 사용한다.
+
+그중가장 보편적인 방식이 배열을 꽉채우지 않고 사용하는 것이다.
+
+그럼 이제 Front와 Rear의 상대적 위치를 통해 비어있는지 꽉 차 있는지를 구분한다.
+
+### (꼬꼬무 문답) Q. Array-Base와 List-Base의 경우 어떤 차이가 존재하는가?
+
+Array-Base의 경우 queue를 구현하기 위해 circular queue로 구현하는 것이 일반적입니다. 이는 메모리를 효율적으로 사용하기 위함이다.
+또한 enqueue가 계속 발생할 경우 fixed size를 넘어서기 때문에, dynamic array와 같은 방법으로 Array의 size를 확장시켜야한다.
+그럼에도 enqueue의 시간복잡도는 (amortized)O(1)을 유지할 수 있다.
+
+List-Base의 경우 보통 singly-linked list로 구현합니다. enqueue는 단순히 singly-linked list에서 append를 하는 것으로 구현하고, 시간복잡도는 O(1)이며,
+dequeue는 맨앞의 원소를 삭제하고 first head를 변경하면 되기 때문에 O(1)의 시간복잡도를 가진다.
+
+요약하자면, 두 가지 종류의 자료구조로 queue를 구현하더라도 enqueue와 dequeue는 모두 O(1)의 시간복잡도를 갖는다.
+Array-Base의 경우 전반적으로 performance가 더 좋지만, worst case의 경우에는 훨씬 느릴 수 있다.(resize)
+
+List-Base의 경우 enqueue를 할때마다 memory allocation을 해야하기 때문에 전반적인 RUNTIME이 느릴 수 있습니다.
